@@ -1,5 +1,7 @@
 package part1intro
 
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 import scala.util._
 
 object Essentials {
@@ -104,24 +106,29 @@ object Essentials {
   }
 
   // Futures + map a future
+  val aFuture = Future {
+    42
+  }
 
   // partial functions
+  val aPartialFunction: PartialFunction[Int, Int] = {
+    case 1 => 10
+    case 2 => 20
+  }
 
   // higher kinded types
-  trait SomeSeq[F[_]] {
+  trait SomeSeq[List[_]] {
     def sequential: Boolean
   }
   val seq = new SomeSeq[List] {
     override def sequential = true
   }
+  val seq2 = new SomeSeq[Option] {
+    override def sequential = false
+  }
 
   def main(args: Array[String]): Unit = {
-
-    val tokenClaim: java.lang.Long = null
-    val opt: Option[Long] = Option(tokenClaim).map(javaLong => javaLong: Long)
-
-    val otherClaim: Long = tokenClaim
-    println(otherClaim)
+    
   }
 
 }
