@@ -48,17 +48,27 @@ object ContextualAbstractions {
     override def toJson(person: Person): String = s"""{"name": "${person.name}"}"""
   }
 
-
   // 3. implicit defs (createListSerializer)
+  implicit def createListSerializer[T](implicit serializer: JsonSerializer[T]): JsonSerializer[List[T]] = {
+    new JsonSerializer[List[T]] {
+      override def toJson(values: List[T]): String =
+        values.map(value => serializer.toJson(value)).mkString("[", ",", "]")
+    }
+  }
 
   // implicit conversions (not recommended) (stringToCat)
+  case class Fox(name: String) {
+    def whatDoesTheFoxSay(): String = s"$name says: yayayayaayaa"
+  }
+  implicit def stringToFox(name: String): Fox = Fox(name)
+
 
   // Scope Rule: An inserted implicit conversion must be in scope as a single
   // identifier, or be associated with the source or target type of the conversion.
 
   def main(args: Array[String]): Unit = {
     println(
-      convertToJson(Person("David"))
+      "Fox Joe".whatDoesTheFoxSay()
     )
   }
 }
