@@ -13,18 +13,20 @@ package part2abstractMath
 
 object Semigroups {
 
-  // Semigroups combine elements of the same type
+  // Semigroups COMBINE elements of the same type
 
   // Semigroup int and string
 
-  // Reduce and general API
+  // Specific API
+
+  // General API
 
   // TODO 1: support a new type
+  case class Expense(id: Long, amount: Double)
 
   // extension methods
 
   // TODO 2: implement reduceThings2 with |+|
-
 
   def main(args: Array[String]): Unit = {
 
