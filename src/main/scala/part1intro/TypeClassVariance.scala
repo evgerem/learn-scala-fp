@@ -10,7 +10,7 @@ object TypeClassVariance {
 
   val res = Option(4) |+| Option(6)
 
-  // val res2 = Some(4) |+| None
+//   val res2 = Some(4) |+| None
 
   // variance
   class Animal
@@ -32,7 +32,7 @@ object TypeClassVariance {
   implicit object CatSoundMaker extends SoundMaker[Cat]
   def makeSound[T](implicit maker: SoundMaker[T]): Unit = println("woho")
   makeSound[Animal]
-//  makeSound[Cat]
+  // makeSound[Cat]
 
   // OptionSoundMaker
   implicit object OptionSoundMaker extends SoundMaker[Option[Int]]
