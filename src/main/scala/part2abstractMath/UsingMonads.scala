@@ -3,8 +3,36 @@ package part2abstractMath
 object UsingMonads {
 
   // either
+  val strOrInt: Either[String, Int] = Left("dsfdf")
+
+  type LoadingOr[T] = Either[String, T]
+  type ErrorOr[T] = Either[Throwable, T]
+
+  import cats.Monad
+  import cats.instances.either._
+
+  val errorMonad = Monad[ErrorOr]
+
+
+  val error: ErrorOr[Int] = errorMonad.pure(10)
+    .map(_ + 10)
 
   // imaginary online store
+  case class OrderStatus(orderId: Long, status: String)
+  def getOrderStatus(orderId: Long): LoadingOr[OrderStatus] =
+    Right(OrderStatus(orderId, "Ready to ship"))
+
+  def trackLocation(orderStatus: OrderStatus): LoadingOr[String] =
+    if (orderStatus.orderId > 1000) Left("Not available")
+    else Right("Amsterdam")
+
+  val orderId = 32L
+  val location = for {
+    ordersStatus <- getOrderStatus(orderId)
+    _ = println(s"order status: $ordersStatus")
+    location <- trackLocation(ordersStatus)
+    _ = println(s"location: $location")
+  } yield location
 
   // TODO: the service layer API of a web app
   case class Connection(host: String, port: String)

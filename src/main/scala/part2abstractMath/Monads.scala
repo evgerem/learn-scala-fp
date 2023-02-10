@@ -26,6 +26,7 @@ object Monads {
   // futures
   val numFuture = Future(1)
   val charFuture = Future('a')
+  val strFuture = Future("abc")
 
   val tupleFuture: Future[(Int, Char)] = for {
     num <- numFuture
@@ -74,8 +75,21 @@ object Monads {
   val futurePure = Monad[Future].pure(1) // Future(1)
 
   // specialized API
+  def getPairsList[X, Y](xs: List[X], ys: List[Y]): List[(X, Y)] =
+    xs.flatMap(x => ys.map(y => (x, y)))
+
+  def getPairsOption[X, Y](xs: Option[X], ys: Option[Y]): Option[(X, Y)] =
+    xs.flatMap(x => ys.map(y => (x, y)))
 
   // generalize
+  import cats.syntax.flatMap._
+  import cats.syntax.functor._
+  def getPairs[F[_]: Monad, X, Y, Z](xs: F[X], ys: F[Y], zs: F[Z]): F[(X, Y, Z)] =
+    for {
+      x <- xs
+      y <- ys
+      z <- zs
+    } yield (x, y, z)
 
   // extension methods - weird imports - pure, flatMap
 
@@ -87,6 +101,8 @@ object Monads {
   // TODO 4: implement a shorter version of getPairs using for-comprehensions
 
   def main(args: Array[String]): Unit = {
-    println(listPure)
+    val f = getPairs(numFuture, charFuture, strFuture)
+    getPairs(numFuture, charFuture, getPairs(numFuture, charFuture, strFuture)).foreach(println);
+    Thread.sleep(100)
   }
 }

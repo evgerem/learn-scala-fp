@@ -17,6 +17,6 @@ object CustomMonads {
 
 
   def main(args: Array[String]): Unit = {
-    val aTree: Tree[Int] = Branch(1, Leaf(2), Leaf(3))
+//    val aTree: Tree[Int] = Branch(1, Leaf(2), Leaf(3))
   }
 }
