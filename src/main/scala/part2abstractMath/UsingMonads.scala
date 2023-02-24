@@ -29,9 +29,9 @@ object UsingMonads {
   val orderId = 32L
   val location = for {
     ordersStatus <- getOrderStatus(orderId)
-    _ = println(s"order status: $ordersStatus")
+//    _ = println(s"order status: $ordersStatus")
     location <- trackLocation(ordersStatus)
-    _ = println(s"location: $location")
+//    _ = println(s"location: $location")
   } yield location
 
   // TODO: the service layer API of a web app
@@ -46,6 +46,36 @@ object UsingMonads {
     def issueRequest(connection: Connection, payload: String): M[String]
   }
   // DO NOT CHANGE THE CODE
+  object OptionHttpService extends HttpService[Option] {
+    override def getConnection(cfg: Map[String, String]): Option[Connection] =
+      for {
+        host <- cfg.get("host")
+        port <- cfg.get("port")
+      } yield Connection(host, port)
+
+    override def issueRequest(connection: Connection, payload: String): Option[String] =
+      if (payload.length >= 20) None
+      else Some(s"request ($payload) has been accepted")
+  }
+
+  object ErrorHttpService extends HttpService[ErrorOr] {
+    override def getConnection(cfg: Map[String, String]): ErrorOr[Connection] = {
+      val connection = for {
+        host <- cfg.get("host")
+        port <- cfg.get("port")
+      } yield Connection(host, port)
+
+      connection match {
+        case Some(conn) => Right(conn)
+        case None => Left(new RuntimeException("No host or port"))
+      }
+    }
+
+    override def issueRequest(connection: Connection, payload: String): ErrorOr[String] =
+      if (payload.length >= 20) Left(new RuntimeException("payload is too big"))
+      else Right(s"request ($payload) has been accepted")
+  }
+
 
   /*
   Requirements:
@@ -60,5 +90,11 @@ object UsingMonads {
 
   def main(args: Array[String]): Unit = {
 
+    val res = for {
+      connection <- ErrorHttpService.getConnection(config)
+      res <- ErrorHttpService.issueRequest(connection, "Foo dsfsdf sdf sdf sdf ")
+    } yield res
+
+    println(res)
   }
 }
