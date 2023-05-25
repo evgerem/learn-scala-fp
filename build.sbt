@@ -10,7 +10,8 @@ lazy val root = (project in file("."))
 val catsVersion = "2.9.0"
 
 libraryDependencies ++= Seq(
-  "org.typelevel" %% "cats-core" % catsVersion
+  "org.typelevel" %% "cats-core" % catsVersion,
+  "org.typelevel" %% "cats-effect" % "3.2.0"
 )
 
 scalacOptions ++= Seq(
